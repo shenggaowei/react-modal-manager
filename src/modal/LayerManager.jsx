@@ -3,20 +3,48 @@ import React from 'react'
 export default modals => WrappedComponent => class LayerManager extends React.Component{
   constructor(props) {
     super(props)
-    this.state = {}
+    this.state = {
+      events: {},
+    }
     this.layers = {}
   }
 
+  setModalRef = (key, modal) => {
+    this.layers[key] = modal
+  }
+
   componentDidMount() {
-    modals.forEach(ele => {
-      const { key, component } = ele;
-      this.layers[key] = component
+  }
+
+  setModalEvent = events => {
+    const data = {}
+    events.forEach(ele => {
+      const { key, ...props } = ele
+      console.log(props)
+      data[key] = props
+    })
+    this.setState({
+      events: data
     })
   }
 
   render() {
-    return <WrappedComponent
-      layers={this.layers}
-    />
+    const { events } = this.state
+    return <React.Fragment>
+      <WrappedComponent
+        layers={this.layers}
+        setModalEvent={this.setModalEvent}
+      />
+      {
+        modals.map(ele => {
+          const { key, Component } = ele
+          return <Component
+            key={key}
+            ref={this.setModalRef.bind(this, key)}
+            {...events[key]}
+          />
+        })
+      }
+    </React.Fragment>
   }
 }

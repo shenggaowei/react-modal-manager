@@ -1,6 +1,5 @@
 import React from 'react'
 import { Modal } from 'antd'
-
 export default (config = {}) => WrappedComponent => class extends React.Component {
   constructor(props) {
     super(props)
@@ -22,17 +21,18 @@ export default (config = {}) => WrappedComponent => class extends React.Componen
   }
 
   handleClickOk = () => {
-
+    this.setState({
+      visible: false
+    }, () => {
+      this.props.handleOk()
+    })
   }
 
   handleClickCancel = () => {
-
-  }
-
-  componentDidMount() {
-    this.props.getButtonFunction({
-      handleClickOk: this.handleClickOk,
-      handleClickCancel: this.handleClickCancel
+    this.setState({
+      visible: false
+    }, () => {
+        this.props.handleCancel()
     })
   }
 
@@ -48,6 +48,8 @@ export default (config = {}) => WrappedComponent => class extends React.Componen
       <WrappedComponent
         handleOpenModal={this.handleOpenModal}
         handleCloseModal={this.handleCloseModal}
+        isVisible={this.state.isVisible}
+        {...this.props}
       />
     </Modal>
   }
